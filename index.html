@@ -4,7 +4,124 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Password Generator</title>
-<link rel="stylesheet" href="css/styles.css">.
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 400px;
+      background-color: #f2f2f2; 
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #007BFF; 
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="number"],
+    input[type="checkbox"] {
+      margin-right: 5px;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 60px;
+      background-color: #fff;
+    }
+
+    input[type="number"]:focus,
+    input[type="checkbox"]:focus {
+      outline: none;
+      border-color: #17a2b8; 
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+      background-color: #17a2b8; 
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #138496; 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .password-display {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 18px;
+      color: #333;
+      background-color: #fff; 
+    }
+
+    .btn-primary {
+      background-color: #007BFF; 
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3; 
+    }
+
+    .btn-danger {
+      background-color: #dc3545; 
+    }
+
+    .btn-danger:hover {
+      background-color: #bd2130;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+    }
+
+    .btn-success:hover {
+      background-color: #218838; 
+    }
+
+    input[type="checkbox"]:checked + label {
+      color: #28a745; 
+    }
+
+    input[type="checkbox"]:checked + label::before {
+      background-color: #28a745; 
+    }
+
+    input[type="number"] {
+      background-color: #f8f9fa; 
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -35,6 +152,81 @@
     <div class="password-display" id="password-display">Click Generate to get a password!</div>
   </div>
   
-  <script src="script.js"></script>
-</body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const lengthInput = document.getElementById('length');
+      const lowercaseCheckbox = document.getElementById('lowercase');
+      const uppercaseCheckbox = document.getElementById('uppercase');
+      const numbersCheckbox = document.getElementById('numbers');
+      const specialCheckbox = document.getElementById('special');
+      const generateBtn = document.getElementById('generate-btn');
+      const copyBtn = document.getElementById('copy-btn');
+      const saveBtn = document.getElementById('save-btn');
+      const passwordDisplay = document.getElementById('password-display');
+    
+      generateBtn.addEventListener('click', () => {
+        const length = parseInt(lengthInput.value);
+        const includeLowercase = lowercaseCheckbox.checked;
+        const includeUppercase = uppercaseCheckbox.checked;
+        const includeNumbers = numbersCheckbox.checked;
+        const includeSpecial = specialCheckbox.checked;
+    
+        const password = generatePassword(length, includeLowercase, includeUppercase, includeNumbers, includeSpecial);
+        passwordDisplay.textContent = password;
+      });
+    
+      copyBtn.addEventListener('click', () => {
+        const textarea = document.createElement('textarea');
+        const password = passwordDisplay.textContent.trim();
+    
+        if (!password) return;
+    
+        textarea.value = password;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+    
+        alert('Password copied to clipboard!');
+      });
+    
+      saveBtn.addEventListener('click', () => {
+        const password = passwordDisplay.textContent.trim();
+        if (password) {
+          savePassword(password);
+        }
+      });
+    
+      function generatePassword(length, includeLowercase, includeUppercase, includeNumbers, includeSpecial) {
+        let charset = '';
+        if (includeLowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
+        if (includeUppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        if (includeNumbers) charset += '0123456789';
+        if (includeSpecial) charset += '!@#$%^&*()-_=+';
+    
+        let password = '';
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * charset.length);
+          password += charset[randomIndex];
+        }
+        return password;
+      }
+    
+      function savePassword(password) {
+        const blob = new Blob([password], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'password.txt';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
+      }
+    });
+  </script>
+</body>  
 </html>
+<!--  integrated everything  -->
